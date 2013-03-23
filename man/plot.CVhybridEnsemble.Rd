@@ -2,8 +2,8 @@
 \alias{plot.CVhybridEnsemble}
 \title{Plot the performance of the cross-validated Hybrid Ensemble}
 \usage{
-  \method{plot}{CVhybridEnsemble} (x, y = NULL,
-    ROCcurve = FALSE, averaging = "threshold", ...)
+\method{plot}{CVhybridEnsemble}(x, y = NULL, ROCcurve = FALSE,
+  averaging = "threshold", ...)
 }
 \arguments{
   \item{x}{An object of class CVhybridEnsemble}
@@ -20,26 +20,25 @@
   \item{...}{Not used}
 }
 \description{
-  This function plots the averaged ROC curve per
-  combination method or the median predictive performance
-  (Area under the ROC, sensitivity or specificity curve
-  depending on what was used in the \code{CVhybridEnsemble}
-  function).
+This function plots the averaged ROC curve per combination
+method or the median predictive performance (Area under the
+ROC, sensitivity or specificity curve depending on what was
+used in the \code{CVhybridEnsemble} function).
 }
 \details{
-  In the legend: 'RBGA' (Genetic Algorithm),'DEOPT'
-  (Differential Evolution),'GENSA' (Generalized Simulated
-  Annealing),'MALSCHAINS' (Memetic Algorithm),'PSOPTIM'
-  (Particle Swarm),'SOMA' (Self Organizing Migrating
-  Algorithm),'TABU' (Tabue Search),'LHNNLS' (Lawson-Hanson
-  Non-negative least squares),'GINNLS' (Goldfarb-Idnani
-  Non-negative least squares),'NNloglik' (Non-negative
-  binomial likelihood),'MEAN' (Simple Mean),'SB' (Single
-  Best),'AUTHORITY' (Authority Based method). The letters
-  next to SB denote the single best for all
-  cross-validation runs: R=Random Forest, S=Bagged Support
-  Vector Machines, K=Kernel Factory, A=AdaBoost, L=Bagged
-  Logistic Regression, N=Bagged Neural Networks
+In the legend: 'RBGA' (Genetic Algorithm),'DEOPT'
+(Differential Evolution),'GENSA' (Generalized Simulated
+Annealing),'MALSCHAINS' (Memetic Algorithm),'PSOPTIM'
+(Particle Swarm),'SOMA' (Self Organizing Migrating
+Algorithm),'TABU' (Tabue Search),'LHNNLS' (Lawson-Hanson
+Non-negative least squares),'GINNLS' (Goldfarb-Idnani
+Non-negative least squares),'NNloglik' (Non-negative
+binomial likelihood),'MEAN' (Simple Mean),'SB' (Single
+Best),'AUTHORITY' (Authority Based method). The letters
+next to SB denote the single best for all cross-validation
+runs: R=Random Forest, S=Bagged Support Vector Machines,
+K=Kernel Factory, A=AdaBoost, L=Bagged Logistic Regression,
+N=Bagged Neural Networks
 }
 \examples{
 data(Credit)
@@ -63,18 +62,18 @@ plot(x=CVhE,ROCcurve= TRUE)
 }
 }
 \author{
-  Authors: Michel Ballings and Dirk Van den Poel,
-  Maintainer: \email{Michel.Ballings@GMail.com}
+Authors: Michel Ballings and Dirk Van den Poel, Maintainer:
+\email{Michel.Ballings@GMail.com}
 }
 \references{
-  Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
-  Ensemble: Many Ensembles is Better Than One, Forthcoming.
+Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
+Ensemble: Many Ensembles is Better Than One, Forthcoming.
 }
 \seealso{
-  \code{\link{hybridEnsemble}},
-  \code{\link{predict.hybridEnsemble}},
-  \code{\link{importance.hybridEnsemble}},
-  \code{\link{CVhybridEnsemble}},
-  \code{\link{summary.CVhybridEnsemble}}
+\code{\link{hybridEnsemble}},
+\code{\link{predict.hybridEnsemble}},
+\code{\link{importance.hybridEnsemble}},
+\code{\link{CVhybridEnsemble}},
+\code{\link{summary.CVhybridEnsemble}}
 }
 

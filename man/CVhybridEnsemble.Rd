@@ -2,35 +2,29 @@
 \alias{CVhybridEnsemble}
 \title{Five times twofold cross-validation for the Hybrid Ensemble function}
 \usage{
-  CVhybridEnsemble(x = NULL, y = NULL, combine = NULL,
-    eval.measure = "auc", verbose = FALSE, RF.ntree = 500,
-    AB.iter = 500, AB.maxdepth = 3, KF.cp = 1,
-    KF.rp = round(log(ncol(x) + 1, 4)), NN.rang = 0.1,
-    NN.maxit = 10000, NN.size = c(5, 10, 20),
-    NN.decay = c(0, 0.001, 0.01, 0.1),
-    SV.gamma = 2^(-15:3), SV.cost = 2^(-5:13),
-    SV.degree = c(2, 3),
-    SV.kernel = c("radial", "sigmoid", "linear", "polynomial"),
-    rbga.popSize = 42, rbga.iters = 500,
-    rbga.mutationChance = 1/rbga.popSize,
-    rbga.elitism = max(1, round(rbga.popSize * 0.05)),
-    DEopt.nP = 20, DEopt.nG = 500, DEopt.F = 0.9314,
-    DEopt.CR = 0.6938, GenSA.maxit = 500,
-    GenSA.temperature = 0.5, GenSA.visiting.param = 2.7,
-    GenSA.acceptance.param = -5, GenSA.max.call = 1e+07,
-    malschains.popsize = 60, malschains.ls = "cmaes",
-    malschains.istep = 300, malschains.effort = 0.5,
-    malschains.alpha = 0.5, malschains.threshold = 1e-08,
-    malschains.maxEvals = 500, psoptim.maxit = 500,
-    psoptim.maxf = Inf, psoptim.abstol = -Inf,
-    psoptim.reltol = 0, psoptim.s = 40, psoptim.k = 3,
-    psoptim.p = 1 - (1 - 1/psoptim.s)^psoptim.k,
-    psoptim.w = 1/(2 * log(2)), psoptim.c.p = 0.5 + log(2),
-    psoptim.c.g = 0.5 + log(2), soma.pathLength = 3,
-    soma.stepLength = 0.11, soma.perturbationChance = 0.1,
-    soma.minAbsoluteSep = 0, soma.minRelativeSep = 0.001,
-    soma.nMigrations = 500, soma.populationSize = 10,
-    tabu.iters = 500, tabu.listSize = c(5:12))
+CVhybridEnsemble(x = NULL, y = NULL, combine = NULL,
+  eval.measure = "auc", verbose = FALSE, RF.ntree = 500, AB.iter = 500,
+  AB.maxdepth = 3, KF.cp = 1, KF.rp = round(log(nrow(x), 10)),
+  NN.rang = 0.1, NN.maxit = 10000, NN.size = c(5, 10, 20),
+  NN.decay = c(0, 0.001, 0.01, 0.1), SV.gamma = 2^(-15:3),
+  SV.cost = 2^(-5:13), SV.degree = c(2, 3), SV.kernel = c("radial",
+  "sigmoid", "linear", "polynomial"), rbga.popSize = 42, rbga.iters = 500,
+  rbga.mutationChance = 1/rbga.popSize, rbga.elitism = max(1,
+  round(rbga.popSize * 0.05)), DEopt.nP = 20, DEopt.nG = 500,
+  DEopt.F = 0.9314, DEopt.CR = 0.6938, GenSA.maxit = 500,
+  GenSA.temperature = 0.5, GenSA.visiting.param = 2.7,
+  GenSA.acceptance.param = -5, GenSA.max.call = 1e+07,
+  malschains.popsize = 60, malschains.ls = "cmaes",
+  malschains.istep = 300, malschains.effort = 0.5, malschains.alpha = 0.5,
+  malschains.threshold = 1e-08, malschains.maxEvals = 500,
+  psoptim.maxit = 500, psoptim.maxf = Inf, psoptim.abstol = -Inf,
+  psoptim.reltol = 0, psoptim.s = 40, psoptim.k = 3, psoptim.p = 1 - (1
+  - 1/psoptim.s)^psoptim.k, psoptim.w = 1/(2 * log(2)), psoptim.c.p = 0.5 +
+  log(2), psoptim.c.g = 0.5 + log(2), soma.pathLength = 3,
+  soma.stepLength = 0.11, soma.perturbationChance = 0.1,
+  soma.minAbsoluteSep = 0, soma.minRelativeSep = 0.001,
+  soma.nMigrations = 500, soma.populationSize = 10, tabu.iters = 500,
+  tabu.listSize = c(5:12))
 }
 \arguments{
   \item{x}{A data frame of predictors. Categorical
@@ -240,30 +234,29 @@
   \item{tabu.listSize}{Tabu list size.}
 }
 \value{
-  A list of class \code{CVhybridEnsemble} containing the
-  following elements: \item{MEAN}{For the simple mean
-  combination method: A list containing the median and
-  inter quartile range of the performance evaluations, the
-  performance evaluations on each fold, and the predictions
-  and reponse vectors for each fold.} \item{AUTHORITY}{For
-  the authority combination method: A list containing the
-  median and inter quartile range of the performance
-  evaluations, the performance evaluations on each fold,
-  and the predictions and reponse vectors for each fold.}
-  \item{SB}{For the single best: A list containing the
-  median and inter quartile range of the performance
-  evaluations, the performance evaluations on each fold,
-  and the predictions and reponse vectors for each fold.}
-  \item{eval.measure}{The performance measure that was
-  used} ..and all the combination methods that are
-  requested.
+A list of class \code{CVhybridEnsemble} containing the
+following elements: \item{MEAN}{For the simple mean
+combination method: A list containing the median and inter
+quartile range of the performance evaluations, the
+performance evaluations on each fold, and the predictions
+and reponse vectors for each fold.} \item{AUTHORITY}{For
+the authority combination method: A list containing the
+median and inter quartile range of the performance
+evaluations, the performance evaluations on each fold, and
+the predictions and reponse vectors for each fold.}
+\item{SB}{For the single best: A list containing the median
+and inter quartile range of the performance evaluations,
+the performance evaluations on each fold, and the
+predictions and reponse vectors for each fold.}
+\item{eval.measure}{The performance measure that was used}
+..and all the combination methods that are requested.
 }
 \description{
-  \code{CVhybridEnsemble} cross-validates (five times
-  twofold) the Hybrid Ensemble function and computes
-  performance statistics that can be plotted
-  (\code{\link{plot.CVhybridEnsemble}}) and summarized
-  (\code{\link{summary.CVhybridEnsemble}}).
+\code{CVhybridEnsemble} cross-validates (five times
+twofold) the Hybrid Ensemble function and computes
+performance statistics that can be plotted
+(\code{\link{plot.CVhybridEnsemble}}) and summarized
+(\code{\link{summary.CVhybridEnsemble}}).
 }
 \examples{
 data(Credit)
@@ -284,18 +277,18 @@ CVhE <- CVhybridEnsemble(x=Credit[1:200,names(Credit) != 'Response'],
 }
 }
 \author{
-  Authors: Michel Ballings, Dauwe Vercamer, and Dirk Van
-  den Poel, Maintainer: \email{Michel.Ballings@GMail.com}
+Authors: Michel Ballings, Dauwe Vercamer, and Dirk Van den
+Poel, Maintainer: \email{Michel.Ballings@GMail.com}
 }
 \references{
-  Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
-  Ensemble: Many Ensembles is Better Than One, Forthcoming.
+Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
+Ensemble: Many Ensembles is Better Than One, Forthcoming.
 }
 \seealso{
-  \code{\link{hybridEnsemble}},
-  \code{\link{predict.hybridEnsemble}},
-  \code{\link{importance.hybridEnsemble}},
-  \code{\link{plot.CVhybridEnsemble}},
-  \code{\link{summary.CVhybridEnsemble}}
+\code{\link{hybridEnsemble}},
+\code{\link{predict.hybridEnsemble}},
+\code{\link{importance.hybridEnsemble}},
+\code{\link{plot.CVhybridEnsemble}},
+\code{\link{summary.CVhybridEnsemble}}
 }
 

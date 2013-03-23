@@ -1,8 +1,8 @@
 Package: hybridEnsemble
 Type: Package
 Title: Build, deploy and evaluate a Hybrid Ensemble
-Version: 0.1.0
-Date: 2013-12-18
+Version: 0.1.1
+Date: 2013-03-23
 Imports:
         randomForest,kernelFactory,ada,rpart,ROCR,nnet,e1071,NMOF,GenSA,Rmalschains,pso,AUC,soma,genalg,reportr,nnls,quadprog,tabuSearch,glmnet
 Author: Michel Ballings, Dauwe Vercamer, and Dirk Van den Poel
@@ -14,11 +14,7 @@ Description: This package contains functions to build and deploy an ensemble
     Ensemble and plot and summarize the results are also provided. There is
     also a function to assess the importance of the predictors.
 License: GPL (>= 2)
-Collate: 'auxiliary.R' 'CVhybridEnsemble.R' 'hybridEnsemble.R'
-        'hybridEnsembleNews.R' 'importance.hybridEnsemble.R'
-        'plot.CVhybridEnsemble.R' 'predict.hybridEnsemble.R'
-        'summary.CVhybridEnsemble.R' 'zzz.R'
-Packaged: 2013-12-19 12:29:23 UTC; mballing
+Packaged: 2014-03-23 17:06:28 UTC; mballing
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-12-19 15:14:32
+Date/Publication: 2014-03-23 19:02:29

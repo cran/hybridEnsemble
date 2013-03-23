@@ -2,35 +2,29 @@
 \alias{hybridEnsemble}
 \title{Binary classification with Hybrid Ensemble}
 \usage{
-  hybridEnsemble(x = NULL, y = NULL, combine = NULL,
-    eval.measure = "auc", verbose = FALSE, RF.ntree = 500,
-    AB.iter = 500, AB.maxdepth = 3, KF.cp = 1,
-    KF.rp = round(log(ncol(x) + 1, 4)), NN.rang = 0.1,
-    NN.maxit = 10000, NN.size = c(5, 10, 20),
-    NN.decay = c(0, 0.001, 0.01, 0.1),
-    SV.gamma = 2^(-15:3), SV.cost = 2^(-5:13),
-    SV.degree = c(2, 3),
-    SV.kernel = c("radial", "sigmoid", "linear", "polynomial"),
-    rbga.popSize = 42, rbga.iters = 300,
-    rbga.mutationChance = 1/rbga.popSize,
-    rbga.elitism = max(1, round(rbga.popSize * 0.05)),
-    DEopt.nP = 20, DEopt.nG = 300, DEopt.F = 0.9314,
-    DEopt.CR = 0.6938, GenSA.maxit = 300,
-    GenSA.temperature = 0.5, GenSA.visiting.param = 2.7,
-    GenSA.acceptance.param = -5, GenSA.max.call = 1e+07,
-    malschains.popsize = 60, malschains.ls = "cmaes",
-    malschains.istep = 300, malschains.effort = 0.5,
-    malschains.alpha = 0.5, malschains.threshold = 1e-08,
-    malschains.maxEvals = 300, psoptim.maxit = 300,
-    psoptim.maxf = Inf, psoptim.abstol = -Inf,
-    psoptim.reltol = 0, psoptim.s = 40, psoptim.k = 3,
-    psoptim.p = 1 - (1 - 1/psoptim.s)^psoptim.k,
-    psoptim.w = 1/(2 * log(2)), psoptim.c.p = 0.5 + log(2),
-    psoptim.c.g = 0.5 + log(2), soma.pathLength = 3,
-    soma.stepLength = 0.11, soma.perturbationChance = 0.1,
-    soma.minAbsoluteSep = 0, soma.minRelativeSep = 0.001,
-    soma.nMigrations = 300, soma.populationSize = 10,
-    tabu.iters = 300, tabu.listSize = c(5:12))
+hybridEnsemble(x = NULL, y = NULL, combine = NULL, eval.measure = "auc",
+  verbose = FALSE, RF.ntree = 500, AB.iter = 500, AB.maxdepth = 3,
+  KF.cp = 1, KF.rp = round(log(nrow(x), 10)), NN.rang = 0.1,
+  NN.maxit = 10000, NN.size = c(5, 10, 20), NN.decay = c(0, 0.001, 0.01,
+  0.1), SV.gamma = 2^(-15:3), SV.cost = 2^(-5:13), SV.degree = c(2, 3),
+  SV.kernel = c("radial", "sigmoid", "linear", "polynomial"),
+  rbga.popSize = 42, rbga.iters = 300,
+  rbga.mutationChance = 1/rbga.popSize, rbga.elitism = max(1,
+  round(rbga.popSize * 0.05)), DEopt.nP = 20, DEopt.nG = 300,
+  DEopt.F = 0.9314, DEopt.CR = 0.6938, GenSA.maxit = 300,
+  GenSA.temperature = 0.5, GenSA.visiting.param = 2.7,
+  GenSA.acceptance.param = -5, GenSA.max.call = 1e+07,
+  malschains.popsize = 60, malschains.ls = "cmaes",
+  malschains.istep = 300, malschains.effort = 0.5, malschains.alpha = 0.5,
+  malschains.threshold = 1e-08, malschains.maxEvals = 300,
+  psoptim.maxit = 300, psoptim.maxf = Inf, psoptim.abstol = -Inf,
+  psoptim.reltol = 0, psoptim.s = 40, psoptim.k = 3, psoptim.p = 1 - (1
+  - 1/psoptim.s)^psoptim.k, psoptim.w = 1/(2 * log(2)), psoptim.c.p = 0.5 +
+  log(2), psoptim.c.g = 0.5 + log(2), soma.pathLength = 3,
+  soma.stepLength = 0.11, soma.perturbationChance = 0.1,
+  soma.minAbsoluteSep = 0, soma.minRelativeSep = 0.001,
+  soma.nMigrations = 300, soma.populationSize = 10, tabu.iters = 300,
+  tabu.listSize = c(5:12))
 }
 \arguments{
   \item{x}{A data frame of predictors. Categorical
@@ -240,43 +234,41 @@
   \item{tabu.listSize}{Tabu list size.}
 }
 \value{
-  A list of class \code{hybridEnsemble} containing the
-  following elements: \item{LR}{Bagged Logistic Regression
-  model} \item{LR.lambda}{Shrinkage parameter}
-  \item{RF}{Random Forest model} \item{AB}{Stochastic
-  AdaBoost model} \item{KF}{Kernel Factory model}
-  \item{NN}{Neural Network model} \item{SV}{Bagged Support
-  Vector Machines model} \item{SB}{A label denoting which
-  sub-ensemble was the single best}
-  \item{weightsAUTHORITY}{The weights for the
-  authority-based weighting method}
-  \item{combine}{Combination methods used}
-  \item{constants}{A vector denoting which predictors are
-  constants} \item{minima}{Minimum values of the predictors
-  required for preprocessing the data for the Neural
-  Network} \item{scaling}{Range values of the predictors
-  required for preprocessing the data for the Neural
-  Network} \item{NumID}{Vector indicating which predictors
-  are numeric} \item{calibratorLR}{The calibrator for the
-  Bagged Logistic Regression model} \item{calibratorRF}{The
-  calibrator for the Random Forest model}
-  \item{calibratorAB}{The calibrator for the Stochastic
-  AdaBoost model} \item{calibratorKF}{The calibrator for
-  the Kernel Factory model} \item{calibratorNN}{The
-  calibrator for the Neural Network model}
-  \item{calibratorSV}{The calibrator for the Bagged Support
-  Vector Machines model} \item{xVALIDATE}{Predictors of the
-  validation sample } \item{predictions}{The seperate
-  predictions by the six sub-ensembles}
-  \item{yVALIDATE}{Response variable of the validation
-  sample} \item{eval.measure}{The evaluation measure that
-  was used}
+A list of class \code{hybridEnsemble} containing the
+following elements: \item{LR}{Bagged Logistic Regression
+model} \item{LR.lambda}{Shrinkage parameter}
+\item{RF}{Random Forest model} \item{AB}{Stochastic
+AdaBoost model} \item{KF}{Kernel Factory model}
+\item{NN}{Neural Network model} \item{SV}{Bagged Support
+Vector Machines model} \item{SB}{A label denoting which
+sub-ensemble was the single best}
+\item{weightsAUTHORITY}{The weights for the authority-based
+weighting method} \item{combine}{Combination methods used}
+\item{constants}{A vector denoting which predictors are
+constants} \item{minima}{Minimum values of the predictors
+required for preprocessing the data for the Neural Network}
+\item{scaling}{Range values of the predictors required for
+preprocessing the data for the Neural Network}
+\item{NumID}{Vector indicating which predictors are
+numeric} \item{calibratorLR}{The calibrator for the Bagged
+Logistic Regression model} \item{calibratorRF}{The
+calibrator for the Random Forest model}
+\item{calibratorAB}{The calibrator for the Stochastic
+AdaBoost model} \item{calibratorKF}{The calibrator for the
+Kernel Factory model} \item{calibratorNN}{The calibrator
+for the Neural Network model} \item{calibratorSV}{The
+calibrator for the Bagged Support Vector Machines model}
+\item{xVALIDATE}{Predictors of the validation sample }
+\item{predictions}{The seperate predictions by the six
+sub-ensembles} \item{yVALIDATE}{Response variable of the
+validation sample} \item{eval.measure}{The evaluation
+measure that was used}
 }
 \description{
-  \code{hybridEnsemble} builds an ensemble consisting of
-  six different sub-ensembles: Bagged Logistic Regressions,
-  Random Forest, Stochastic AdaBoost, Kernel Factory,
-  Bagged Neural Networks, Bagged Support Vector Machines.
+\code{hybridEnsemble} builds an ensemble consisting of six
+different sub-ensembles: Bagged Logistic Regressions,
+Random Forest, Stochastic AdaBoost, Kernel Factory, Bagged
+Neural Networks, Bagged Support Vector Machines.
 }
 \examples{
 data(Credit)
@@ -295,18 +287,18 @@ hE <-hybridEnsemble(x=Credit[1:100,names(Credit) != 'Response'],
 }
 }
 \author{
-  Authors: Michel Ballings, Dauwe Vercamer, and Dirk Van
-  den Poel, Maintainer: \email{Michel.Ballings@GMail.com}
+Authors: Michel Ballings, Dauwe Vercamer, and Dirk Van den
+Poel, Maintainer: \email{Michel.Ballings@GMail.com}
 }
 \references{
-  Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
-  Ensemble: Many Ensembles is Better Than One, Forthcoming.
+Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
+Ensemble: Many Ensembles is Better Than One, Forthcoming.
 }
 \seealso{
-  \code{\link{predict.hybridEnsemble}},
-  \code{\link{importance.hybridEnsemble}},
-  \code{\link{CVhybridEnsemble}},
-  \code{\link{plot.CVhybridEnsemble}},
-  \code{\link{summary.CVhybridEnsemble}}
+\code{\link{predict.hybridEnsemble}},
+\code{\link{importance.hybridEnsemble}},
+\code{\link{CVhybridEnsemble}},
+\code{\link{plot.CVhybridEnsemble}},
+\code{\link{summary.CVhybridEnsemble}}
 }
 

@@ -2,9 +2,8 @@
 \alias{summary.CVhybridEnsemble}
 \title{Summarize the performance of the cross-validated Hybrid Ensemble}
 \usage{
-  \method{summary}{CVhybridEnsemble} (object, name = "",
-    stat = "median", LateX = FALSE, toppart = FALSE,
-    bottompart = FALSE, ...)
+\method{summary}{CVhybridEnsemble}(object, name = "", stat = "median",
+  LateX = FALSE, toppart = FALSE, bottompart = FALSE, ...)
 }
 \arguments{
   \item{object}{An object of class CVhybridEnsemble}
@@ -31,23 +30,23 @@
   \item{...}{Not used}
 }
 \description{
-  This function produces summary results per combination
-  method.
+This function produces summary results per combination
+method.
 }
 \details{
-  In the output: 'RBGA' (Genetic Algorithm),'DEOPT'
-  (Differential Evolution),'GENSA' (Generalized Simulated
-  Annealing),'MALSCHAINS' (Memetic Algorithm),'PSOPTIM'
-  (Particle Swarm),'SOMA' (Self Organizing Migrating
-  Algorithm),'TABU' (Tabue Search),'LHNNLS' (Lawson-Hanson
-  Non-negative least squares),'GINNLS' (Goldfarb-Idnani
-  Non-negative least squares),'NNloglik' (Non-negative
-  binomial likelihood),'MEAN' (Simple Mean),'SB' (Single
-  Best),'AUTHORITY' (Authority Based method). SB names
-  denote the single best for all cross-validation runs:
-  R=Random Forest, S=Bagged Support Vector Machines,
-  K=Kernel Factory, A=AdaBoost, L=Bagged Logistic
-  Regression, N=Bagged Neural Networks
+In the output: 'RBGA' (Genetic Algorithm),'DEOPT'
+(Differential Evolution),'GENSA' (Generalized Simulated
+Annealing),'MALSCHAINS' (Memetic Algorithm),'PSOPTIM'
+(Particle Swarm),'SOMA' (Self Organizing Migrating
+Algorithm),'TABU' (Tabue Search),'LHNNLS' (Lawson-Hanson
+Non-negative least squares),'GINNLS' (Goldfarb-Idnani
+Non-negative least squares),'NNloglik' (Non-negative
+binomial likelihood),'MEAN' (Simple Mean),'SB' (Single
+Best),'AUTHORITY' (Authority Based method). SB names denote
+the single best for all cross-validation runs: R=Random
+Forest, S=Bagged Support Vector Machines, K=Kernel Factory,
+A=AdaBoost, L=Bagged Logistic Regression, N=Bagged Neural
+Networks
 }
 \examples{
 data(Credit)
@@ -84,18 +83,18 @@ cat(
 }
 }
 \author{
-  Authors: Michel Ballings and Dirk Van den Poel,
-  Maintainer: \email{Michel.Ballings@GMail.com}
+Authors: Michel Ballings and Dirk Van den Poel, Maintainer:
+\email{Michel.Ballings@GMail.com}
 }
 \references{
-  Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
-  Ensemble: Many Ensembles is Better Than One, Forthcoming.
+Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
+Ensemble: Many Ensembles is Better Than One, Forthcoming.
 }
 \seealso{
-  \code{\link{hybridEnsemble}},
-  \code{\link{predict.hybridEnsemble}},
-  \code{\link{importance.hybridEnsemble}},
-  \code{\link{CVhybridEnsemble}},
-  \code{\link{plot.CVhybridEnsemble}}
+\code{\link{hybridEnsemble}},
+\code{\link{predict.hybridEnsemble}},
+\code{\link{importance.hybridEnsemble}},
+\code{\link{CVhybridEnsemble}},
+\code{\link{plot.CVhybridEnsemble}}
 }
 

@@ -2,9 +2,8 @@
 \alias{importance.hybridEnsemble}
 \title{Importance method for hybridEnsemble objects}
 \usage{
-  \method{importance}{hybridEnsemble} (x = NULL,
-    xdata = NULL, ydata = NULL, method = "MEAN", CV = 1,
-    sort = TRUE)
+\method{importance}{hybridEnsemble}(x = NULL, xdata = NULL, ydata = NULL,
+  method = "MEAN", CV = 1, sort = TRUE)
 }
 \arguments{
   \item{x}{An object of class hybridEnsemble created by the
@@ -33,16 +32,16 @@
   sorted with the most important ones on top?}
 }
 \value{
-  A data frame with two colums: the variable name and the
-  importance of the variable.
+A data frame with two colums: the variable name and the
+importance of the variable.
 }
 \description{
-  Assess the importance of new data using a hybridEnsemble
-  model. The importance is computed as follows. For each
-  variable, compute the AUC of the model before permuting
-  that variable and after. Next, subtract the latter from
-  the former. This is called the decrease in AUC. If CV is
-  greater than one, the mean is taken from all runs.
+Assess the importance of new data using a hybridEnsemble
+model. The importance is computed as follows. For each
+variable, compute the AUC of the model before permuting
+that variable and after. Next, subtract the latter from the
+former. This is called the decrease in AUC. If CV is
+greater than one, the mean is taken from all runs.
 }
 \examples{
 data(Credit)
@@ -65,18 +64,18 @@ hE <-hybridEnsemble(x=Credit[1:100,names(Credit) != 'Response'],
 }
 }
 \author{
-  Authors: Michel Ballings, Dauwe Vercamer, and Dirk Van
-  den Poel, Maintainer: \email{Michel.Ballings@GMail.com}
+Authors: Michel Ballings, Dauwe Vercamer, and Dirk Van den
+Poel, Maintainer: \email{Michel.Ballings@GMail.com}
 }
 \references{
-  Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
-  Ensemble: Many Ensembles is Better Than One, Forthcoming.
+Ballings, M., Vercamer, D., Van den Poel, D., Hybrid
+Ensemble: Many Ensembles is Better Than One, Forthcoming.
 }
 \seealso{
-  \code{\link{hybridEnsemble}},
-  \code{\link{predict.hybridEnsemble}},
-  \code{\link{CVhybridEnsemble}},
-  \code{\link{plot.CVhybridEnsemble}},
-  \code{\link{summary.CVhybridEnsemble}}
+\code{\link{hybridEnsemble}},
+\code{\link{predict.hybridEnsemble}},
+\code{\link{CVhybridEnsemble}},
+\code{\link{plot.CVhybridEnsemble}},
+\code{\link{summary.CVhybridEnsemble}}
 }
 
