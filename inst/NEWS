@@ -1,0 +1,15 @@
+Main functions:
+--------------------
+-Build a Hybrid Ensemble: ?hybridEnsemble
+-Deploy a Hybrid Ensemble: ?predict.hybridEnsemble
+-Assess variable importances: ?importance.hybridEnsemble
+-Cross-validate a Hybrid Ensemble: ?CVhybridEnsemble
+-Plot results: ?plot.CVhybridEnsemble
+-Summarize results: ?summary.CVhybridEnsemble
+
+
+Change log:
+--------------------
+
+* Version 0.1.0: December 2013
+- Package submitted to CRAN with main functions hybridEnsemble, predict, importance, CVhybridEnsemble, plot, summary
