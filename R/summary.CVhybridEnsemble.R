@@ -9,7 +9,7 @@
 #' @param toppart TRUE or FALSE. For the LateX table. Should the top part of the table be printed. Useful for concatenating multiple runs of the \code{summary} function (see examples).
 #' @param bottompart TRUE or FALSE. For the LateX table. Should the bottom part of the table be printed. Useful for concatenating multiple runs of the \code{summary} function (see examples).
 #' @param ... Not used
-#' @details In the output: 'RBGA' (Genetic Algorithm),'DEOPT' (Differential Evolution),'GENSA' (Generalized Simulated Annealing),'MALSCHAINS' (Memetic Algorithm),'PSOPTIM' (Particle Swarm),'SOMA' (Self Organizing Migrating Algorithm),'TABU' (Tabue Search),'LHNNLS' (Lawson-Hanson Non-negative least squares),'GINNLS' (Goldfarb-Idnani Non-negative least squares),'NNloglik' (Non-negative binomial likelihood),'MEAN' (Simple Mean),'SB' (Single Best),'AUTHORITY' (Authority Based method). SB names denote the single best for all cross-validation runs: R=Random Forest, S=Bagged Support Vector Machines, K=Kernel Factory, A=AdaBoost, L=Bagged Logistic Regression, N=Bagged Neural Networks
+#' @details In the output: 'RBGA' (Genetic Algorithm), 'DEOPT' (Differential Evolution), 'GENSA' (Generalized Simulated Annealing), 'MALSCHAINS' (Memetic Algorithm), 'PSOPTIM' (Particle Swarm), 'SOMA' (Self Organizing Migrating Algorithm), 'TABU' (Tabue Search), 'LHNNLS' (Lawson-Hanson Non-negative least squares), 'GINNLS' (Goldfarb-Idnani Non-negative least squares), 'NNloglik' (Non-negative binomial likelihood), 'MEAN' (Simple Mean), 'SB' (Single Best), 'AUTHORITY' (Authority Based method). SB names denote the single best for all cross-validation runs: RF= Random Forest, SV= Bagged Support Vector Machines, KF= Kernel Factory, AB=AdaBoost, LR=Bagged Logistic Regression, NN=Bagged Neural Networks, RoF= Rotation Forest, KN= K-Nearest Neighbors.
 #' @examples
 #' 
 #' 
@@ -48,7 +48,7 @@
 #' 
 #' @references Ballings, M., Vercamer, D., Van den Poel, D., Hybrid Ensemble: Many Ensembles is Better Than One, Forthcoming.
 #' @seealso \code{\link{hybridEnsemble}}, \code{\link{predict.hybridEnsemble}}, \code{\link{importance.hybridEnsemble}}, \code{\link{CVhybridEnsemble}}, \code{\link{plot.CVhybridEnsemble}}
-#' @author Authors: Michel Ballings and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
+#' @author Michel Ballings and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
 #' @method summary CVhybridEnsemble
 summary.CVhybridEnsemble <- function(object,name='', stat="median", LateX=FALSE, toppart=FALSE, bottompart=FALSE,... ) {
   
@@ -59,7 +59,14 @@ summary.CVhybridEnsemble <- function(object,name='', stat="median", LateX=FALSE,
   lab <- character()
   
   SBnames <- character()
-  for (i in 1:length(unlist(object$SB$SBname)))  SBnames[i] <- paste(substr(unlist(object$SB$SBname)[i],1,1)) 
+  for (i in 1:length(unlist(object$SB$SBname)))  {
+   
+    if (i<length(unlist(object$SB$SBname))) {
+      SBnames[i] <- paste(substr(unlist(object$SB$SBname)[i],1,2),",",sep="") 
+    } else {
+      SBnames[i] <- paste(substr(unlist(object$SB$SBname)[i],1,2)) 
+    }
+  }
   SBnames <- paste(SBnames,collapse="")
   
   if (LateX==FALSE) {

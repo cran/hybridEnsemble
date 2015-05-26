@@ -1,18 +1,31 @@
-Main functions:
---------------------
--Build a Hybrid Ensemble: ?hybridEnsemble
--Deploy a Hybrid Ensemble: ?predict.hybridEnsemble
--Assess variable importances: ?importance.hybridEnsemble
--Cross-validate a Hybrid Ensemble: ?CVhybridEnsemble
--Plot results: ?plot.CVhybridEnsemble
--Summarize results: ?summary.CVhybridEnsemble
+Planned changes in next versions:
+----------------------------------------
+
+-parameter to yield prediction vectors of sub-ensembles and also summary and plots
+-add parameter to use percentile ranks instead of calibration
+-incorporate statistical test in table
+-mechanism to compute and plot variance of predictions for all sub-ensembles and meta ensemble
 
 
 Change log:
---------------------
+----------------------------------------
+
+* Version 1.0.0: May, 26 2015
+
+-added a seventh base classifier: rotation forest
+-add an eight base classifier: bagged nearest neighbors
+-added parameters for size of sub-ensembles
+-added oversampling to alleviate problems related to class imbalance and subsequent subsetting
+-added a filter parameter to remove near constants that often produced problems in subsetting.
+-added error handling
+-added formal automated tests
+-refactored for faster and shorter code
+-changed to [-1,1] scaling in neural networks
+-made sure that no (near) constants can be produced in bagging procedures
+-corrected typesetting issues in documentation
 
 * Version 0.1.1: March 2014
-- Fixed small bug that occured in rare cases
+- Fixed small bug that occurred in rare cases
 
 * Version 0.1.0: December 2013
 - Package submitted to CRAN with main functions hybridEnsemble, predict, importance, CVhybridEnsemble, plot, summary

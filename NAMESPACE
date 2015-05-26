@@ -1,4 +1,4 @@
-import(randomForest,kernelFactory,ada,rpart,ROCR,nnet,e1071,NMOF,GenSA,Rmalschains,pso,AUC,soma,genalg,reportr,nnls,quadprog,tabuSearch)
+import(randomForest, kernelFactory, ada, rpart, ROCR, nnet, e1071, NMOF, GenSA, Rmalschains, pso, AUC, soma, genalg, reportr, nnls, quadprog, tabuSearch, rotationForest, FNN)
 importFrom(glmnet,glmnet)
 export(CVhybridEnsemble)
 export(hybridEnsemble)

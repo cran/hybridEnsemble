@@ -7,7 +7,7 @@
 #' @param ROCcurve TRUE or FALSE. Should the ROC curve be plotted or the median predictive performances?
 #' @param averaging For the ROC curve: "threshold" averaging, "horizontal" averaging, or "vertical" averaging.
 #' @param ... Not used
-#' @details In the legend: 'RBGA' (Genetic Algorithm),'DEOPT' (Differential Evolution),'GENSA' (Generalized Simulated Annealing),'MALSCHAINS' (Memetic Algorithm),'PSOPTIM' (Particle Swarm),'SOMA' (Self Organizing Migrating Algorithm),'TABU' (Tabue Search),'LHNNLS' (Lawson-Hanson Non-negative least squares),'GINNLS' (Goldfarb-Idnani Non-negative least squares),'NNloglik' (Non-negative binomial likelihood),'MEAN' (Simple Mean),'SB' (Single Best),'AUTHORITY' (Authority Based method). The letters next to SB denote the single best for all cross-validation runs: R=Random Forest, S=Bagged Support Vector Machines, K=Kernel Factory, A=AdaBoost, L=Bagged Logistic Regression, N=Bagged Neural Networks
+#' @details In the output: 'RBGA' (Genetic Algorithm), 'DEOPT' (Differential Evolution), 'GENSA' (Generalized Simulated Annealing), 'MALSCHAINS' (Memetic Algorithm), 'PSOPTIM' (Particle Swarm), 'SOMA' (Self Organizing Migrating Algorithm), 'TABU' (Tabue Search), 'LHNNLS' (Lawson-Hanson Non-negative least squares), 'GINNLS' (Goldfarb-Idnani Non-negative least squares), 'NNloglik' (Non-negative binomial likelihood), 'MEAN' (Simple Mean), 'SB' (Single Best), 'AUTHORITY' (Authority Based method). SB names denote the single best for all cross-validation runs: RF= Random Forest, SV= Bagged Support Vector Machines, KF= Kernel Factory, AB=AdaBoost, LR=Bagged Logistic Regression, NN=Bagged Neural Networks, RoF= Rotation Forest, KN= K-Nearest Neighbors.
 #' @examples
 #' 
 #' 
@@ -32,7 +32,7 @@
 #' }
 #' @references Ballings, M., Vercamer, D., Van den Poel, D., Hybrid Ensemble: Many Ensembles is Better Than One, Forthcoming.
 #' @seealso \code{\link{hybridEnsemble}}, \code{\link{predict.hybridEnsemble}}, \code{\link{importance.hybridEnsemble}}, \code{\link{CVhybridEnsemble}}, \code{\link{summary.CVhybridEnsemble}}
-#' @author Authors: Michel Ballings and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
+#' @author Michel Ballings and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
 #' @method plot CVhybridEnsemble
 plot.CVhybridEnsemble <- function(x,y=NULL, ROCcurve= FALSE, averaging="threshold", ...) {
 
@@ -58,7 +58,16 @@ if (ROCcurve==TRUE){
     
     xlabels <- names(x)[1:(length(x)-1)]
     lab <- character()
-    for (i in 1:length(unlist(x$SB$SBname)))  lab[i] <- paste(substr(unlist(x$SB$SBname)[i],1,1)) 
+
+    for (i in 1:length(unlist(x$SB$SBname)))  {
+   
+    if (i<length(unlist(x$SB$SBname))) {
+      lab[i] <- paste(substr(unlist(x$SB$SBname)[i],1,2),",",sep="") 
+    } else {
+      lab[i] <- paste(substr(unlist(x$SB$SBname)[i],1,2)) 
+    }
+  }
+    
     xlabels[length(xlabels)] <- paste(xlabels[length(xlabels)],":",paste(lab,collapse=""),sep="")
     
     legend("bottomright", legend=xlabels,col=colors,lty=1,lwd=3,cex=1)
@@ -70,7 +79,15 @@ if (ROCcurve==TRUE){
   xlabels <- names(x)[1:(length(x)-1)]
 
   lab <- character()
-  for (i in 1:length(unlist(x$SB$SBname)))  lab[i] <- paste(substr(unlist(x$SB$SBname)[i],1,1)) 
+
+      for (i in 1:length(unlist(x$SB$SBname)))  {
+   
+    if (i<length(unlist(x$SB$SBname))) {
+      lab[i] <- paste(substr(unlist(x$SB$SBname)[i],1,2),",",sep="") 
+    } else {
+      lab[i] <- paste(substr(unlist(x$SB$SBname)[i],1,2)) 
+    }
+  }
   xlabels[length(xlabels)] <- paste(xlabels[length(xlabels)],"\n",paste(lab,collapse=""))
   
   v <-  barplot(dat,

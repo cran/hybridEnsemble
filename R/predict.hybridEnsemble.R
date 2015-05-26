@@ -34,7 +34,7 @@
 #' \item{predSB}{Predictions by the single best}
 #' \item{predAUTHORITY}{Predictions combined by authority}
 #' ..and all the combination methods that are requested in the \code{\link{hybridEnsemble}} function.
-#' @author Authors: Michel Ballings, Dauwe Vercamer, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
+#' @author Michel Ballings, Dauwe Vercamer, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
 #' @method predict hybridEnsemble
 predict.hybridEnsemble <- function(object,newdata,verbose=FALSE, ...){
     
@@ -63,11 +63,14 @@ predict.hybridEnsemble <- function(object,newdata,verbose=FALSE, ...){
        #neural networks
        predNN <- data.frame(matrix(nrow=nrow(newdata),ncol=length(object$NN)))
        for (i in 1:length(object$NN)) {
-           newdatanum <- newdata[, object$NumID[[i]]]
-           newdatascaled <- data.frame(base::scale(newdatanum,center=object$minima[[i]],scale=object$scaling[[i]]), newdata[,!object$NumID[[i]]])
-           colnames(newdatascaled) <- c(colnames(newdata)[object$NumID[[i]]], colnames(newdata)[!object$NumID[[i]]])
-           predNN[,i] <- as.numeric(predict(object$NN[[i]],newdatascaled,type="raw"))  
-           
+           newdatascaled <- data.frame(sapply(newdata, as.numeric))
+           newdatascaled <- data.frame(sapply(newdatascaled, function(x) if(length(unique(x))==2 && min(x)==1) x-1 else x))
+
+         
+           newdatascaled <- data.frame(t((t(newdatascaled) - ((object$minima[[i]] + object$maxima[[i]])/2))/((object$maxima[[i]]-object$minima[[i]])/2))) 
+         
+           predNN[,i] <- as.numeric(predict(object=object$NN[[i]],newdata=newdatascaled,type="raw"))  
+
        }
        predNN <- as.numeric(rowMeans(predNN))
        predNN <- .predict.calibrate(object=object$calibratorNN, newdata=predNN)
@@ -81,10 +84,34 @@ predict.hybridEnsemble <- function(object,newdata,verbose=FALSE, ...){
        predSV <- as.numeric(rowMeans(predSV))
        predSV <- .predict.calibrate(object=object$calibratorSV, newdata=predSV)
        
+       #rotation forest
+       predRoF <- as.numeric(predict(object$RoF,newdata))
+       predRoF <- .predict.calibrate(object=object$calibratorRoF, newdata=predRoF)
        
-       
-       
-       predictions <- data.frame(LR=predLR,RF=predRF,AB=predAB,KF=predKF,NN=predNN,SV=predSV)
+       #k-nearest neighbors
+  
+
+       newdata_KNN <- data.frame(sapply(newdata, as.numeric))
+       newdata_KNN <- data.frame(sapply(newdata_KNN, function(x) if(length(unique(x))==2 && min(x)==1) x-1 else x))
+         
+       predKNN <- data.frame(matrix(nrow=nrow(newdata_KNN),ncol=object$KNN.size))
+       for (i in 1:object$KNN.size){
+          ind <- sample(1:nrow(object$x_KNN),size=round(nrow(object$x_KNN)), replace=TRUE)
+          #retrieve the indicators of the k nearest neighbors of the query data 
+          indicatorsKNN <- as.integer(knnx.index(data=object$x_KNN, query=newdata_KNN, k=object$KNN.K))
+          #retrieve the actual y from the tarining set
+          predKNNoptimal <- as.integer(as.character(object$y_KNN[indicatorsKNN]))
+          #if k > 1 than we take the proportion of 1s
+          predKNN[,i] <- rowMeans(data.frame(matrix(data=predKNNoptimal,ncol=object$KNN.K,nrow=nrow(newdata_KNN))))
+       }
+        
+       predKNN <- rowMeans(predKNN)
+       predKNN <- .predict.calibrate(object=object$calibratorKNN, newdata=predKNN)
+  
+  
+       #####     
+  
+       predictions <- data.frame(LR=predLR,RF=predRF,AB=predAB,KF=predKF,NN=predNN,SV=predSV,RoF=predRoF,KN=predKNN)
     
       
        result <- list()
