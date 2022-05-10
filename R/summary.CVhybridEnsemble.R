@@ -7,7 +7,8 @@
 #' @param stat 'median' or 'IQR' (inter quartile range) of the performance measure used in the CVhybridEnsemble object
 #' @param LateX TRUE or FALSE. If true LateX code is printed to the screen. Otherwise a data frame.
 #' @param toppart TRUE or FALSE. For the LateX table. Should the top part of the table be printed. Useful for concatenating multiple runs of the \code{summary} function (see examples).
-#' @param bottompart TRUE or FALSE. For the LateX table. Should the bottom part of the table be printed. Useful for concatenating multiple runs of the \code{summary} function (see examples).
+#' @param bottompart TRUE or FALSE. For the LateX table. Should the bottom part of the table be printed. Useful for concatenating multiple runs of the \code{summary} function (see examples). The all parameter will not have effect when setting this to TRUE.
+#' @param all TRUE or FALSE. Should the results of the predict.all be printed along with the main results? Works only when predict.all=TRUE in the call to \code{CVhybridEnsemble}.
 #' @param ... Not used
 #' @details In the output: 'RBGA' (Genetic Algorithm), 'DEOPT' (Differential Evolution), 'GENSA' (Generalized Simulated Annealing), 'MALSCHAINS' (Memetic Algorithm), 'PSOPTIM' (Particle Swarm), 'SOMA' (Self Organizing Migrating Algorithm), 'TABU' (Tabue Search), 'LHNNLS' (Lawson-Hanson Non-negative least squares), 'GINNLS' (Goldfarb-Idnani Non-negative least squares), 'NNloglik' (Non-negative binomial likelihood), 'MEAN' (Simple Mean), 'SB' (Single Best), 'AUTHORITY' (Authority Based method). SB names denote the single best for all cross-validation runs: RF= Random Forest, SV= Bagged Support Vector Machines, KF= Kernel Factory, AB=AdaBoost, LR=Bagged Logistic Regression, NN=Bagged Neural Networks, RoF= Rotation Forest, KN= K-Nearest Neighbors.
 #' @examples
@@ -46,11 +47,11 @@
 #' 
 #' }
 #' 
-#' @references Ballings, M., Vercamer, D., Van den Poel, D., Hybrid Ensemble: Many Ensembles is Better Than One, Forthcoming.
+#' @references Ballings, M., Vercamer, D., Bogaert, M., Van den Poel, D.
 #' @seealso \code{\link{hybridEnsemble}}, \code{\link{predict.hybridEnsemble}}, \code{\link{importance.hybridEnsemble}}, \code{\link{CVhybridEnsemble}}, \code{\link{plot.CVhybridEnsemble}}
-#' @author Michel Ballings and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
+#' @author Michel Ballings, Dauwe Vercamer, Matthias Bogaert, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
 #' @method summary CVhybridEnsemble
-summary.CVhybridEnsemble <- function(object,name='', stat="median", LateX=FALSE, toppart=FALSE, bottompart=FALSE,... ) {
+summary.CVhybridEnsemble <- function(object,name='', stat="median", LateX=FALSE, toppart=FALSE, bottompart=FALSE, all=TRUE, ... ) {
   
   
   stat <- match.arg(stat,c('median','IQR'))
@@ -71,21 +72,27 @@ summary.CVhybridEnsemble <- function(object,name='', stat="median", LateX=FALSE,
   
   if (LateX==FALSE) {
     
-    for (i in 1:(length(object)-1)) {dat[i] <- round(object[[i]][[stat]],4)  }
+    to_subtract <- if (names(object)[length(names(object))]=="diversity") 2 else 1
+    for (i in 1:(length(object)-to_subtract)) {dat[i] <- round(object[[i]][[stat]],4)  }
     
-    for (i in 1:(length(object)-1)) {lab[i] <- paste(substr(names(object)[i],1,4))}
+    for (i in 1:(length(object)-to_subtract)) {lab[i] <- paste(substr(names(object)[i],1,4))}
     
     result <- data.frame(t(dat),SBnames, row.names=name)
     colnames(result) <- c(lab,"SB names")
-    result  
+    
+    if (all==TRUE && !is.null(object$diversity)) {
+      list(overview=result,diversity=object$diversity)
+    } else {
+      result
+    }
     
   }else {
   
+  to_subtract <- if (names(object)[length(names(object))]=="diversity") 2 else 1
 
+  for (i in 1:(length(object)-to_subtract)) {if (i==length(object)) { dat[i] <- paste("\\small{", round(object[[i]][[stat]],4),"}",sep="") } else {  dat[i] <- paste("\\small{",round(object[[i]][[stat]],4),"} &",sep="")  }  }
 
-  for (i in 1:(length(object)-1)) {if (i==length(object)) { dat[i] <- paste("\\small{", round(object[[i]][[stat]],4),"}",sep="") } else {  dat[i] <- paste("\\small{",round(object[[i]][[stat]],4),"} &",sep="")  }  }
-
-  for (i in (1:length(object)-1)) {if (i==length(object)) { lab[i] <- paste("\\small{", substr(names(object)[i],1,4) , "}", sep="") } else {  lab[i] <- paste("\\small{",substr(names(object)[i],1,4),"} &",sep="")  }  }
+  for (i in (1:length(object)-to_subtract)) {if (i==length(object)) { lab[i] <- paste("\\small{", substr(names(object)[i],1,4) , "}", sep="") } else {  lab[i] <- paste("\\small{",substr(names(object)[i],1,4),"} &",sep="")  }  }
   
   if (tolower(object$eval.measure)=='auc'){
     measure <- 'AUC'

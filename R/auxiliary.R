@@ -13,7 +13,8 @@
   
      
   if (is.matrix(predictions)) if (ncol(predictions) == 2 ) predictions <- predictions[,2]
-  perf[i] <- performance(prediction(predictions,ytest),"auc")@y.values[[1]]
+  perf[i] <- AUC::auc(roc(predictions,ytest))
+  
   }
   perf <- data.frame(grid, auc=perf)
   perf[which.max(perf$auc),]
@@ -100,7 +101,7 @@
         predrfCAL <- predict(object=rf, newdata=xVALIDATE)
     
         i <- i + 1
-        AUC[i,1:2] <- c(performance(prediction(predrfCAL,yVALIDATE), measure="auc")@y.values[[1]],nbreaks)
+        AUC[i,1:2] <- c(AUC::auc(roc(predrfCAL,yVALIDATE)),nbreaks)
       }
       names(AUC) <- c("AUC","nbreaks")
     }  
@@ -195,3 +196,73 @@
 .maxBit <- function(x,g=2) UseMethod(".maxBit")
 .maxBit.numeric <- function(x,g=2) ceiling(log(x+1,g))-1
 .maxBit.character <- function(x,g=2) max(nchar(x))-1
+
+
+###############################################################################
+#adaptation of the predict.ada method for predict.all
+
+.predictada <-
+function(object,newdata=NULL){
+  if(!inherits(object,"ada")){
+    stop("Error:  Object is not of class ada")
+  }
+
+  iter=object$iter
+  
+  lev<-levels(as.factor(object$actual))
+  const<-2
+ 
+  f<-object$model$lossObj$predict.type
+  tmp <- sapply(1:iter,function(i)f(f=object$model$trees[[i]],dat=newdata))
+  tmp <- data.frame(ifelse(tmp==-1,0,1))
+  return(tmp)
+#   tmp=t(t(tmp)*object$model$alpha[1:iter])
+#     
+#   probstore <- data.frame(matrix(NA,nrow=nrow(newdata),ncol=ncol(tmp)))
+#   for (i in 1:ncol(tmp)){
+# 
+# 
+#     
+#        cal<-function(x,const){
+#          if(x>0)
+#            return(c(exp(-const*x),1))
+#          return(c(1,exp(const*x)))
+#        }
+#     
+#     
+#       probs<-t(sapply(tmp[,i],cal,const=const))
+#       probs<-probs/apply(probs,1,sum)
+#       probstore[,i] <- probs[,2]
+#   }
+#   return(probstore)
+
+}
+
+################################################################################################################################
+############################
+.diversity <- function(predictionvectors){
+      #first remove vectors with sd equal to 0 to 
+      #avoid problems in cor
+      sel <- logical(ncol(predictionvectors))
+      for (i in 1:ncol(predictionvectors)){
+          sel[i] <- sd(predictionvectors[,i])!=0
+      }
+      predictionvectors <- predictionvectors[,sel]
+      
+      members <- 1:ncol(predictionvectors)
+      
+      #get all possible combinations
+      combinations <- combn(members, 2)
+      combinations <- t(combinations)
+      
+      #compute absolute value of pairwise correlations
+      cors <- numeric(nrow(combinations))
+      for (i in 1:nrow(combinations)){
+          sel <- predictionvectors[,combinations[i,]]
+          cors[i] <- abs(cor(sel[,1],sel[,2]))
+      }
+      #take the mean and subtract it from 1
+      #diversity is a measure between 0 and 1 
+      #with 1 perfect diversity and 0 no diversity
+      1-mean(cors)
+}

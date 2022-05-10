@@ -1,19 +1,53 @@
 Planned changes in next versions:
 ----------------------------------------
-
--parameter to yield prediction vectors of sub-ensembles and also summary and plots
--add parameter to use percentile ranks instead of calibration
--incorporate statistical test in table
--mechanism to compute and plot variance of predictions for all sub-ensembles and meta ensemble
-
+-verify if plot and importance functions still work correctly after upgrade to 1.7.5 (already verified for summary function, but still need to check LaTeX parameters in this function)
+-adapt combination methods to handle varying number of sub-ensembles (specified in 'algorithms' parameter). rbga and soma are already done.
+-add parallel parameter to hybridEnsemble(). CVhybridEnsemble has a parallel parameter already.
+-add other performance measures (now only AUC) in diversity calculation
 
 Change log:
 ----------------------------------------
+* Version 1.7.8: May 9, 2022
+-Import new pacakges for CRAN 
+
+* Version 1.7.8: February 15, 2017
+-enabled soma
+
+* Version 1.7.7: December 16, 2016
+-turned off refitting model on training + validation data after validating to obtain better correspondence between weights and models
+-fixed reporting of diversity for predSB
+
+* Version 1.7.6: September 5, 2016
+-bug fix for KNN. Renamed everything to KN.
+-added more diversity output
+
+* Version 1.7.5: September 4, 2016
+-changed name of diversity parameter to 'diversity' in  CVhybridEnsemble() and added accuracy in the output
+-comment out all combination methods except rbga
+-added parallel parameter to CVhybridEnsemble()
+-adapted defaults of rbga to handle varying number of sub-ensembles
+-added a parameter, called algorithms, in hybridEnsemble() and CVhybridEnsemble() to be able to select a subset of algorithms. A minimum of two algorithms is required.
+-added ninth base classifier: Bagged Naive Bayes to hybridEnsemble(), and predict()
+-added skip parameter (nnet) to hybridEnsemble() and CVhybridEnsemble() with tuning option
+-nearest neighbors (in hybridEnsemble() and predict()): added scaling to [0,1]
+-added error checking for dependent variable (can only be 0 or 1) in hybridEnsemble()
+-improved verbose printing
+-resolved inconsistencies in documentation
+
+* Version 1.2.0: December, 15, 2015
+-fixed a bug related to the filter parameter
+-fixed a minor bug in passing on the optimal k for kNN 
+-CVhybridEnsemble: compute diversity (1 minus absolute value of mean of pairwise correlations) for all sub-ensembles and meta ensemble, along with AUC 
+-adapts summary and plot functions to handle predict.all
+-parameter predict.all in CVhybridEnsemble function
+-parameter calibrate to use percentile ranks instead of calibration
+-parameter predict.all in predict function to yield prediction vectors of sub-ensembles and base classifiers
+-fixed a bug in the bootstrapping procedure for KNN
+-fixed a bug in the improvement of the bootstrapping for LR, NN, SV, introduced in version 1.0.0
 
 * Version 1.0.0: May, 26 2015
-
 -added a seventh base classifier: rotation forest
--add an eight base classifier: bagged nearest neighbors
+-added an eight base classifier: bagged nearest neighbors
 -added parameters for size of sub-ensembles
 -added oversampling to alleviate problems related to class imbalance and subsequent subsetting
 -added a filter parameter to remove near constants that often produced problems in subsetting.
@@ -21,7 +55,7 @@ Change log:
 -added formal automated tests
 -refactored for faster and shorter code
 -changed to [-1,1] scaling in neural networks
--made sure that no (near) constants can be produced in bagging procedures
+-made sure that no (near) constants can be produced in bootstrap procedures
 -corrected typesetting issues in documentation
 
 * Version 0.1.1: March 2014

@@ -31,10 +31,10 @@
 #' }
 #'                      
 #' 
-#' @references Ballings, M., Vercamer, D., Van den Poel, D., Hybrid Ensemble: Many Ensembles is Better Than One, Forthcoming.
+#' @references Ballings, M., Vercamer, D., Bogaert, M., Van den Poel, D.
 #' @seealso \code{\link{hybridEnsemble}}, \code{\link{predict.hybridEnsemble}}, \code{\link{CVhybridEnsemble}}, \code{\link{plot.CVhybridEnsemble}}
 #' @return A data frame with two colums: the variable name and the importance of the variable.
-#' @author Michel Ballings, Dauwe Vercamer, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
+#' @author Michel Ballings, Dauwe Vercamer, Matthias Bogaert, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
 #' @method importance hybridEnsemble
 importance.hybridEnsemble <- function(x=NULL,xdata=NULL,ydata=NULL, method="MEAN", CV=1, sort=TRUE){
   

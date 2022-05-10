@@ -30,9 +30,9 @@
 #' plot(x=CVhE,ROCcurve= FALSE)
 #' plot(x=CVhE,ROCcurve= TRUE)
 #' }
-#' @references Ballings, M., Vercamer, D., Van den Poel, D., Hybrid Ensemble: Many Ensembles is Better Than One, Forthcoming.
+#' @references Ballings, M., Vercamer, D., Bogaert, M., Van den Poel, D.
 #' @seealso \code{\link{hybridEnsemble}}, \code{\link{predict.hybridEnsemble}}, \code{\link{importance.hybridEnsemble}}, \code{\link{CVhybridEnsemble}}, \code{\link{summary.CVhybridEnsemble}}
-#' @author Michel Ballings and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
+#' @author Michel Ballings, Dauwe Vercamer, Matthias Bogaert, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
 #' @method plot CVhybridEnsemble
 plot.CVhybridEnsemble <- function(x,y=NULL, ROCcurve= FALSE, averaging="threshold", ...) {
 
@@ -40,7 +40,7 @@ if (ROCcurve==TRUE){
   
   colors <- c("blue","red","green","violet","purple","cornflowerblue","orange","brown","black")[1:length(x)]
   
-  for (i in 1:(length(x)-1)) {
+  for (i in 1:(length(x)-2)) {
       
     PREDS <- list()
     for (ii in 1:10) PREDS[[ii]] <- x[[i]]$predictions[[ii]]$predicted
@@ -56,7 +56,7 @@ if (ROCcurve==TRUE){
     
     lines(x=seq(0,1,0.1),y=seq(0,1,0.1),lty=3)
     
-    xlabels <- names(x)[1:(length(x)-1)]
+    xlabels <- names(x)[1:(length(x)-2)]
     lab <- character()
 
     for (i in 1:length(unlist(x$SB$SBname)))  {
@@ -75,8 +75,8 @@ if (ROCcurve==TRUE){
       
 }else {
   dat <- numeric()
-  for (i in 1:(length(x)-1)) dat[i] <- round(x[[i]]$median,4)
-  xlabels <- names(x)[1:(length(x)-1)]
+  for (i in 1:(length(x)-2)) dat[i] <- round(x[[i]]$median,4)
+  xlabels <- names(x)[1:(length(x)-2)]
 
   lab <- character()
 

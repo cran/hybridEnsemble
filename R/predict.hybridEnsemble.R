@@ -5,6 +5,7 @@
 #' @param object An object of class hybridEnsemble created by the function  \code{hybridEnsemble}
 #' @param newdata A data frame with the same predictors as in the training data
 #' @param verbose TRUE or FALSE. Should information be printed to the screen
+#' @param predict.all TRUE or FALSE. Should the predictions of all the members be returned?
 #' @param ... Not currently used
 #' 
 #' @examples
@@ -26,7 +27,7 @@
 #' predictions <- predict(hE, newdata=Credit[1:100,names(Credit) != 'Response'])
 #' }
 #' 
-#' @references Ballings, M., Vercamer, D., Van den Poel, D., Hybrid Ensemble: Many Ensembles is Better Than One, Forthcoming.
+#' @references Ballings, M., Vercamer, D., Bogaert, M., Van den Poel, D.
 #' @seealso \code{\link{hybridEnsemble}}, \code{\link{CVhybridEnsemble}}, \code{\link{importance.hybridEnsemble}}, \code{\link{plot.CVhybridEnsemble}}, \code{\link{summary.CVhybridEnsemble}}
 #' @return A list containing the following vectors:
 #' \item{predMEAN}{Predictions combined by the simple mean}
@@ -34,86 +35,195 @@
 #' \item{predSB}{Predictions by the single best}
 #' \item{predAUTHORITY}{Predictions combined by authority}
 #' ..and all the combination methods that are requested in the \code{\link{hybridEnsemble}} function.
-#' @author Michel Ballings, Dauwe Vercamer, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
+#' @author Michel Ballings, Dauwe Vercamer, Matthias Bogaert, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
 #' @method predict hybridEnsemble
-predict.hybridEnsemble <- function(object,newdata,verbose=FALSE, ...){
+predict.hybridEnsemble <- function(object,newdata,verbose=FALSE, predict.all=FALSE, ...){
     
+       predictions <- data.frame(matrix(NA,nrow=nrow(newdata),ncol=0))
        newdata <- newdata[,!object$constants]
-      
+       if (predict.all) baseclassifiers <- list()
+       
+      ########################################
+      if (!is.null(object$LR)){ 
        #bagged logit
        predLR <- data.frame(matrix(nrow=nrow(newdata),ncol=length(object$LR)))
        for (i in 1:length(object$LR)) {
          predLR[,i] <- as.numeric(predict(object$LR[[i]],newx=data.matrix(newdata),type="response",s=object$LR.lambda))
        }
-       predLR <- as.numeric(rowMeans(predLR))
-       predLR <- .predict.calibrate(object=object$calibratorLR, newdata=predLR)
-       
-       #random forest
-       predRF <- as.numeric(predict(object$RF, newdata,type="prob")[,2])
-       predRF <- .predict.calibrate(object=object$calibratorRF, newdata=predRF)
-    
-       #adaboost
-       predAB <- as.numeric(predict(object$AB, newdata,type="probs")[,2])
-       predAB <- .predict.calibrate(object=object$calibratorAB, newdata=predAB)
-    
-       #kernel factory
-       predKF <- as.numeric(predict(object$KF, newdata,type="probs"))
-       predKF <- .predict.calibrate(object=object$calibratorKF, newdata=predKF)
+       if (predict.all) {
+         baseclassifiers$predLR <- predLR
+       }
+       predictions$LR <- as.numeric(rowMeans(predLR))
+       rm(predLR)
+       if (is.null(object$calibratorLR)) {
+          predictions$LR  <- rank(predictions$LR ,ties.method="min")/length(predictions$LR )
+       } else {
+          predictions$LR  <- .predict.calibrate(object=object$calibratorLR, newdata=predictions$LR )
+       }
+      }
       
-       #neural networks
+       ######################################## 
+       #random forest
+      if (!is.null(object$RF)){
+       if (predict.all) baseclassifiers$predRF <- data.frame(sapply(data.frame(predict(object$RF, newdata,type="prob", predict.all=TRUE)$individual,stringsAsFactors=FALSE),as.integer,simplify=FALSE))
+  
+       predictions$RF <- as.numeric(predict(object$RF, newdata,type="prob")[,2])
+
+       #if one calibrator is NULL then all are NULL meaning that calibrate=FALSE in hybridEnsemble
+       if (is.null(object$calibratorRF)) {
+          predictions$RF <- rank(predictions$RF,ties.method="min")/length(predictions$RF)
+       } else {
+          predictions$RF <- .predict.calibrate(object=object$calibratorRF, newdata=predictions$RF)
+       }
+      }
+       
+      ########################################
+      if (!is.null(object$AB)){
+       #adaboost
+       if (predict.all) baseclassifiers$predAB <- .predictada(object=object$AB,newdata)
+       predictions$AB <- as.numeric(predict(object$AB, newdata,type="probs")[,2])
+       
+       if (is.null(object$calibratorAB)) {
+          predictions$AB <- rank(predictions$AB,ties.method="min")/length(predictions$AB)
+       } else {
+          predictions$AB <- .predict.calibrate(object=object$calibratorAB, newdata=predictions$AB)
+       }
+      }
+      
+      ######################################## 
+      if (!is.null(object$KF)){
+       #kernel factory
+       if (predict.all) baseclassifiers$predKF <- predict(object$KF, newdata, predict.all=TRUE)
+       predictions$KF <- as.numeric(predict(object$KF, newdata))
+       
+       if (is.null(object$calibratorKF)) {
+          predictions$KF <- rank(predictions$KF,ties.method="min")/length(predictions$KF)
+       } else {
+          predictions$KF <- .predict.calibrate(object=object$calibratorKF, newdata=predictions$KF)
+       }
+      }
+     
+       
+      ######################################## 
+     if (!is.null(object$NN)){
+      #neural networks
        predNN <- data.frame(matrix(nrow=nrow(newdata),ncol=length(object$NN)))
        for (i in 1:length(object$NN)) {
            newdatascaled <- data.frame(sapply(newdata, as.numeric))
            newdatascaled <- data.frame(sapply(newdatascaled, function(x) if(length(unique(x))==2 && min(x)==1) x-1 else x))
 
-         
+
            newdatascaled <- data.frame(t((t(newdatascaled) - ((object$minima[[i]] + object$maxima[[i]])/2))/((object$maxima[[i]]-object$minima[[i]])/2))) 
          
            predNN[,i] <- as.numeric(predict(object=object$NN[[i]],newdata=newdatascaled,type="raw"))  
 
        }
-       predNN <- as.numeric(rowMeans(predNN))
-       predNN <- .predict.calibrate(object=object$calibratorNN, newdata=predNN)
+       if (predict.all)  baseclassifiers$predNN <- predNN
        
+       predictions$NN <- as.numeric(rowMeans(predNN))
+       rm(predNN)
+       if (is.null(object$calibratorNN)) {
+          predictions$NN <- rank(predictions$NN,ties.method="min")/length(predictions$NN)
+       } else {
+          predictions$NN <- .predict.calibrate(object=object$calibratorNN, newdata=predictions$NN)
+       }
+     }
+      
+      ########################################  
+      if (!is.null(object$SV)){
        #support vector machines
        predSV <- data.frame(matrix(nrow=nrow(newdata),ncol=length(object$SV)))
        for (i in 1:length(object$SV)) {
            predSV[,i] <- as.numeric(attr(predict(object$SV[[i]],newdata, probability=TRUE),"probabilities")[,2])
            
        }      
-       predSV <- as.numeric(rowMeans(predSV))
-       predSV <- .predict.calibrate(object=object$calibratorSV, newdata=predSV)
+       if (predict.all)  baseclassifiers$predSV <- predSV
+       predictions$SV <- as.numeric(rowMeans(predSV))
+       rm(predSV)
        
+       if (is.null(object$calibratorSV)) {
+          predictions$SV <- rank(predictions$SV,ties.method="min")/length(predictions$SV)
+       } else {
+          predictions$SV <- .predict.calibrate(object=object$calibratorSV, newdata=predictions$SV)
+       }
+      }
+       
+      ########################################
+      if (!is.null(object$RoF)){
        #rotation forest
-       predRoF <- as.numeric(predict(object$RoF,newdata))
-       predRoF <- .predict.calibrate(object=object$calibratorRoF, newdata=predRoF)
+       if (predict.all)  baseclassifiers$predRoF <- data.frame(predict(object$RoF,newdata,all=TRUE))
        
+       predictions$RoF <- as.numeric(predict(object$RoF,newdata[,sapply(newdata,is.numeric)]))
+       
+       
+       if (is.null(object$calibratorRoF)) {
+          predictions$RoF <- rank(predictions$RoF,ties.method="min")/length(predictions$RoF)
+       } else {
+          predictions$RoF <- .predict.calibrate(object=object$calibratorRoF, newdata=predictions$RoF)
+       }  
+      }
+       
+      ######################################## 
+      if (!is.null(object$x_KN)){
        #k-nearest neighbors
   
 
-       newdata_KNN <- data.frame(sapply(newdata, as.numeric))
-       newdata_KNN <- data.frame(sapply(newdata_KNN, function(x) if(length(unique(x))==2 && min(x)==1) x-1 else x))
-         
-       predKNN <- data.frame(matrix(nrow=nrow(newdata_KNN),ncol=object$KNN.size))
-       for (i in 1:object$KNN.size){
-          ind <- sample(1:nrow(object$x_KNN),size=round(nrow(object$x_KNN)), replace=TRUE)
+       newdata_KN <- data.frame(sapply(newdata, as.numeric))
+       newdata_KN <- data.frame(sapply(newdata_KN, function(x) if(length(unique(x))==2 && min(x)==1) x-1 else x))
+       newdata_KN <- data.frame(t((t(newdata_KN)-object$minimaKN)/(object$maximaKN-object$minimaKN)))
+          
+       predKN <- data.frame(matrix(nrow=nrow(newdata_KN),ncol=object$KN.size))
+       for (i in 1:object$KN.size){
+          ind <- sample(1:nrow(object$x_KN),size=round(nrow(object$x_KN)), replace=TRUE)
           #retrieve the indicators of the k nearest neighbors of the query data 
-          indicatorsKNN <- as.integer(knnx.index(data=object$x_KNN, query=newdata_KNN, k=object$KNN.K))
+          indicatorsKN <- as.integer(knnx.index(data=object$x_KN[ind,], query=newdata_KN, k=object$KN.K))
           #retrieve the actual y from the tarining set
-          predKNNoptimal <- as.integer(as.character(object$y_KNN[indicatorsKNN]))
+          predKNoptimal <- as.integer(as.character(object$y_KN[indicatorsKN]))
           #if k > 1 than we take the proportion of 1s
-          predKNN[,i] <- rowMeans(data.frame(matrix(data=predKNNoptimal,ncol=object$KNN.K,nrow=nrow(newdata_KNN))))
+          predKN[,i] <- rowMeans(data.frame(matrix(data=predKNoptimal,ncol=object$KN.K,nrow=nrow(newdata_KN))))
        }
-        
-       predKNN <- rowMeans(predKNN)
-       predKNN <- .predict.calibrate(object=object$calibratorKNN, newdata=predKNN)
+       if (predict.all)  baseclassifiers$predKN <- predKN
+       predictions$KN <- rowMeans(predKN)
+       rm(predKN)
   
+       if (is.null(object$calibratorKN)) {
+          predictions$KN <- rank(predictions$KN,ties.method="min")/length(predictions$KN)
+       } else {
+          predictions$KN <- .predict.calibrate(object=object$calibratorKN, newdata=predictions$KN)
+       }  
+      }
+       
+      ######################################## 
+      if (!is.null(object$NB)){
+       #bagged naive bayes
+       
+       #Use ame data as KN
+       if (!exists("newdata_KN")){
+          newdata_KN <- data.frame(sapply(newdata, as.numeric))
+          newdata_KN <- data.frame(sapply(newdata_KN, function(x) if(length(unique(x))==2 && min(x)==1) x-1 else x))
+          newdata_KN <- data.frame(t((t(newdata_KN)-object$minimaKN)/(object$maximaKN-object$minimaKN)))
+       }
+       
+       
+       predNB <- data.frame(matrix(nrow=nrow(newdata),ncol=length(object$NB)))
+       for (i in 1:length(object$NB)) {
+         predNB[,i] <- predict(object=object$NB[[i]], newdata_KN, type = "raw", threshold = 0.001)[,2]
+       }
+       if (predict.all) {
+         baseclassifiers$predNB <- predNB
+       }
+       predictions$NB <- as.numeric(rowMeans(predNB))
+       rm(predNB)
+       
+       if (is.null(object$calibratorNB)) {
+          predictions$NB <- rank(predictions$NB,ties.method="min")/length(predictions$NB)
+       } else {
+          predictions$NB <- .predict.calibrate(object=object$calibratorNB, newdata=predictions$NB)
+       }
+      }
   
        #####     
   
-       predictions <- data.frame(LR=predLR,RF=predRF,AB=predAB,KF=predKF,NN=predNN,SV=predSV,RoF=predRoF,KN=predKNN)
-    
-      
        result <- list()
 
        if (tolower('rbga') %in% tolower(object$combine)) {
@@ -179,6 +289,12 @@ predict.hybridEnsemble <- function(object,newdata,verbose=FALSE, ...){
        
        if (verbose==TRUE) cat('   Authority \n')
        result$predAUTHORITY <- as.numeric(rowSums(t(t(predictions)*as.numeric(object$weightsAUTHORITY))))
+    
+       if (predict.all) {
+         result$subensembles <- predictions
+         result$baseclassifiers <- baseclassifiers
+       }
+         
     return(result)
 }
 
