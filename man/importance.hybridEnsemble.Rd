@@ -10,7 +10,8 @@
   ydata = NULL,
   method = "MEAN",
   CV = 1,
-  sort = TRUE
+  sort = TRUE,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@
 \item{CV}{An integer indicating the number of cross-validation runs}
 
 \item{sort}{TRUE or FALSE. Should the predictors be sorted with the most important ones on top?}
+
+\item{...}{Not currently used}
 }
 \value{
 A data frame with two colums: the variable name and the importance of the variable.

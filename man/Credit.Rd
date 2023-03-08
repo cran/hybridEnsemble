@@ -1,7 +1,7 @@
 \name{Credit}
 \alias{Credit}
 \docType{data}
-\title{ Credit approval (Frank and Asuncion, 2010)
+\title{Credit approval (Frank and Asuncion, 2010)
 }
 \description{
     \code{Credit} contains credit card applications. The dataset has a good mix of continuous and categorical features.

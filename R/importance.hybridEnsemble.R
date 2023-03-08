@@ -8,6 +8,7 @@
 #' @param method One of 'RBGA' (Genetic Algorithm), 'DEOPT' (Differential Evolution), 'GENSA' (Generalized Simulated Annealing), 'MALSCHAINS' (Memetic Algorithm), 'PSOPTIM' (Particle Swarm), 'SOMA' (Self Organizing Migrating Algorithm), 'TABU' (Tabu Search), 'LHNNLS' (Lawson-Hanson Non-negative least squares), 'GINNLS' (Goldfarb-Idnani Non-negative least squares), 'NNloglik' (Non-negative binomial likelihood), 'MEAN' (Simple Mean), 'SB' (Single Best), 'AUTHORITY' (Authority Based method)
 #' @param CV An integer indicating the number of cross-validation runs
 #' @param sort TRUE or FALSE. Should the predictors be sorted with the most important ones on top? 
+#' @param ... Not currently used
 #' 
 #' @examples
 #' 
@@ -36,7 +37,7 @@
 #' @return A data frame with two colums: the variable name and the importance of the variable.
 #' @author Michel Ballings, Dauwe Vercamer, Matthias Bogaert, and Dirk Van den Poel, Maintainer: \email{Michel.Ballings@@GMail.com}
 #' @method importance hybridEnsemble
-importance.hybridEnsemble <- function(x=NULL,xdata=NULL,ydata=NULL, method="MEAN", CV=1, sort=TRUE){
+importance.hybridEnsemble <- function(x=NULL,xdata=NULL,ydata=NULL, method="MEAN", CV=1, sort=TRUE,...){
   
   method <- match.arg(toupper(method),c('RBGA','DEOPT','GENSA','MALSCHAINS','PSOPTIM','SOMA','TABU','LHNNLS','GINNLS','NNloglik','MEAN','SB','AUTHORITY'))
   

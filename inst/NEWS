@@ -7,6 +7,9 @@ Planned changes in next versions:
 
 Change log:
 ----------------------------------------
+* Version 1.7.9: March 8, 2023
+-Add ... to importance function
+
 * Version 1.7.8: May 9, 2022
 -Import new pacakges for CRAN 
 
